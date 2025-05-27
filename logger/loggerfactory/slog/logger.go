@@ -69,7 +69,7 @@ func (l LoggerWrapper) InfoContext(ctx context.Context, msg string, keyvals ...i
 	l.lgr.Log(ctx, slog.LevelInfo, msg, keyvals...)
 }
 func (l LoggerWrapper) WarnContext(ctx context.Context, msg string, keyvals ...interface{}) {
-	otelslog.AddLogToSpan(ctx, slog.LevelError, msg, keyvals...)
+	otelslog.AddLogToSpan(ctx, slog.LevelWarn, msg, keyvals...)
 	l.lgr.Log(ctx, slog.LevelWarn, msg, keyvals...)
 }
 func (l LoggerWrapper) DebugContext(ctx context.Context, msg string, keyvals ...interface{}) {

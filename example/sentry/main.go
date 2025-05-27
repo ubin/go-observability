@@ -56,7 +56,7 @@ func main() {
 		WithStackTrace().
 		WithCode(404).
 		WithTextCode("RESOURCE_NOT_FOUND")
-	logger.Log.ErrorContext(ctx, "Custom Error: %v", enrichedErr)
+	logger.Log.ErrorContext(ctx, "Custom Error", enrichedErr)
 	//capture the stack trace with sentry
 	sentry.CaptureException(enrichedErr)
 
