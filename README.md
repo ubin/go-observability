@@ -21,8 +21,8 @@ $ go get github.com/ubin/go-telemetry
 ### Usage
 Refer to the example applications in the repository for detailed usage:
 
-- Tracing Example with Sentry: [example/sentry](examples/sentry/main.go)
-- Example with stdout: [examples/stdout](examples/stdout/main.go)
+- Tracing Example with Sentry: [example/sentry](example/sentry/main.go)
+- Example with stdout: [examples/stdout](example/stdout/main.go)
 
 These examples demonstrate how to configure and use tracing, logging, and error monitoring in your applications.
 
