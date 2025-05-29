@@ -39,22 +39,34 @@ type Config interface {
 	GetLocalTime() bool
 }
 
-// Logger represent common interface for logging function
-type Logger interface {
+// BasicLogger represents common logging methods without context
+type BasicLogger interface {
 	Info(msg string, keyvals ...interface{})
 	Warn(msg string, keyvals ...interface{})
 	Error(msg string, keyvals ...interface{})
 	Debug(msg string, keyvals ...interface{})
 	Panic(msg string, keyvals ...interface{})
+}
 
+// ContextLogger represents logging methods that accept a context
+type ContextLogger interface {
 	InfoContext(ctx context.Context, msg string, keyvals ...interface{})
 	WarnContext(ctx context.Context, msg string, keyvals ...interface{})
 	ErrorContext(ctx context.Context, msg string, keyvals ...interface{})
 	DebugContext(ctx context.Context, msg string, keyvals ...interface{})
 	PanicContext(ctx context.Context, msg string, keyvals ...interface{})
+}
 
-	//should return the underlying logger lib
+// UnderlyingLoggerProvider represents the method to retrieve the underlying logger library
+type UnderlyingLoggerProvider interface {
 	UnderlyingLogger() interface{}
+}
+
+// Logger combines all three interfaces into a single interface for convenience
+type Logger interface {
+	BasicLogger
+	ContextLogger
+	UnderlyingLoggerProvider
 }
 
 // SetLogger is the setter for log variable, it should be the only way to assign value to log
