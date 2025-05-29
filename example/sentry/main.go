@@ -2,11 +2,14 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
 	"github.com/getsentry/sentry-go"
+	"github.com/goliatone/go-errors"
+	logconfig "github.com/ubin/go-telemetry/example/sentry/config"
+	"github.com/ubin/go-telemetry/logger"
+	"github.com/ubin/go-telemetry/logger/loggerfactory"
 	"github.com/ubin/go-telemetry/telemetry"
 	"github.com/ubin/go-telemetry/telemetry/config"
 	"go.opentelemetry.io/otel"
@@ -34,23 +37,49 @@ func main() {
 		}
 	}()
 
+	initlogger()
+
 	tracer := otel.Tracer("example-tracer")
-	ctx, span := tracer.Start(context.Background(), "example-span")
+	ctx, span := tracer.Start(ctx, "example-span")
 	defer span.End()
 
 	// Simulate work
 	time.Sleep(2 * time.Second)
-	span.AddEvent("Processing completed")
-	sentry.CaptureMessage("Test message")
+	logger.Log.InfoContext(ctx, "Processing completed")
 
-	// Simulate an error
-	err = fmt.Errorf("simulated error for demonstration purposes")
-	if err != nil {
-		span.RecordError(err)
-		sentry.CaptureException(err)
-		log.Printf("error occurred: %v", err)
+	errSample := errors.New("simulated error for demonstration purposes", errors.CategoryNotFound)
+
+	// Add context
+	enrichedErr := errSample.
+		WithMetadata(map[string]any{"ctx_id": 123}).
+		WithRequestID("req-456").
+		WithStackTrace().
+		WithCode(404).
+		WithTextCode("RESOURCE_NOT_FOUND")
+	logger.Log.ErrorContext(ctx, "Custom Error", enrichedErr)
+	//capture the stack trace with sentry
+	sentry.CaptureException(enrichedErr)
+
+	logger.Log.InfoContext(ctx, "Trace completed")
+
+}
+
+func initlogger() {
+
+	logCfg := logconfig.LoggerConfig{
+		Code:         "slog",
+		Level:        "info",
+		Formatter:    "json",
+		EnableCaller: true,
+		FileEnabled:  false,
+		Filename:     "app.log",
+		MaxSize:      10,
+		MaxBackups:   5,
+		MaxAge:       30,
+		Compress:     true,
+		LocalTime:    true,
 	}
-
-	fmt.Println("Trace completed")
-
+	if err := loggerfactory.Register(logCfg, "test"); err != nil {
+		log.Fatalf("failed to register logger: %v", err)
+	}
 }

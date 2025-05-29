@@ -2,6 +2,7 @@ package slog
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 
@@ -70,6 +71,9 @@ func AddLogToSpan(ctx context.Context, level slog.Level, msg string, keyvals ...
 		attrs := make([]attribute.KeyValue, 0, len(keyvals)/2+2)
 		attrs = append(attrs, attribute.String("log.level", level.String()))
 		attrs = append(attrs, attribute.String("log.message", msg))
+
+		var capturedError error
+
 		for i := 0; i < len(keyvals); i += 2 {
 			key, ok := keyvals[i].(string)
 			if !ok {
@@ -86,10 +90,26 @@ func AddLogToSpan(ctx context.Context, level slog.Level, msg string, keyvals ...
 				attrs = append(attrs, attribute.Bool(key, v))
 			case float64:
 				attrs = append(attrs, attribute.Float64(key, v))
+			case error:
+				// Capture the error if present
+				capturedError = v
+				attrs = append(attrs, attribute.String(key, v.Error()))
 			default:
 				attrs = append(attrs, attribute.String(key, fmt.Sprintf("%v", v)))
 			}
 		}
-		span.AddEvent("log", trace.WithAttributes(attrs...))
+		if level == slog.LevelError {
+			// span.RecordError(errors.New(msg), trace.WithAttributes(attrs...))
+			// Use the captured error if available, otherwise create a new one
+			if capturedError != nil {
+				span.RecordError(capturedError)
+			} else {
+				span.RecordError(errors.New(msg), trace.WithAttributes(attrs...))
+			}
+		} else {
+			// Add a default attribute for non-error logs
+			span.AddEvent("log", trace.WithAttributes(attrs...))
+		}
+
 	}
 }

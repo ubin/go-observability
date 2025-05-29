@@ -2,25 +2,18 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
+	"github.com/goliatone/go-errors"
+	"github.com/ubin/go-telemetry/logger"
+	"github.com/ubin/go-telemetry/logger/loggerfactory"
 	"github.com/ubin/go-telemetry/telemetry"
 	"github.com/ubin/go-telemetry/telemetry/config"
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/sdk/trace"
-)
 
-// WithOpenTracing will initialize the order status sync cron job
-func WithOpenTracing(cfg config.Config) (*trace.TracerProvider, error) {
-	if !cfg.IsEnabled() {
-		// logger.Log.Info("tracing is disabled")
-		return nil, nil
-	}
-	// logger.Log.Info("initializing otel exporter")
-	return telemetry.InitTracer(cfg)
-}
+	logconfig "github.com/ubin/go-telemetry/example/stdout/config"
+)
 
 func main() {
 	ctx := context.Background()
@@ -44,12 +37,46 @@ func main() {
 		}
 	}()
 
+	initlogger()
+
 	tracer := otel.Tracer("example-tracer")
-	ctx, span := tracer.Start(context.Background(), "example-span")
+	ctx, span := tracer.Start(ctx, "example-span")
+	defer span.End()
+
 	time.Sleep(2 * time.Second) // Simulating work
-	span.AddEvent("Processing completed")
-	span.End()
+	logger.Log.InfoContext(ctx, "Processing completed")
 
-	fmt.Println("Trace completed")
+	errSample := errors.New("just cuz", errors.CategoryNotFound)
+	// Add context
+	enrichedErr := errSample.
+		WithMetadata(map[string]any{"ctx_id": 123}).
+		WithRequestID("req-456").
+		WithStackTrace().
+		WithCode(404).
+		WithTextCode("RESOURCE_NOT_FOUND")
+	logger.Log.ErrorContext(ctx, "Custom Error", "metadata", enrichedErr)
+	// span.RecordError(enrichedErr.WithRequestID(`req-456`))
 
+	logger.Log.InfoContext(ctx, "Trace completed")
+
+}
+
+func initlogger() {
+
+	logCfg := logconfig.LoggerConfig{
+		Code:         "slog",
+		Level:        "info",
+		Formatter:    "json",
+		EnableCaller: true,
+		FileEnabled:  false,
+		Filename:     "app.log",
+		MaxSize:      10,
+		MaxBackups:   5,
+		MaxAge:       30,
+		Compress:     true,
+		LocalTime:    true,
+	}
+	if err := loggerfactory.Register(logCfg, "test"); err != nil {
+		log.Fatalf("failed to register logger: %v", err)
+	}
 }
