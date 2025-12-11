@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -43,11 +44,15 @@ func Middleware(config *Config) func(http.Handler) http.Handler {
 				if requestID == "" {
 					requestID = uuid.New().String()
 				}
-				w.Header().Set(RequestIDHeader, requestID)
 			}
 
 			// Wrap response writer to capture status code
 			rw := newResponseWriter(w)
+
+			// Set request ID header on wrapped writer
+			if requestID != "" {
+				rw.Header().Set(RequestIDHeader, requestID)
+			}
 
 			// Skip tracing if no tracer provider
 			if config.TracerProvider == nil {
@@ -92,8 +97,8 @@ func Middleware(config *Config) func(http.Handler) http.Handler {
 			spanID := spanContext.SpanID().String()
 
 			// Add trace context to response headers
-			w.Header().Set(TraceIDHeader, traceID)
-			w.Header().Set(SpanIDHeader, spanID)
+			rw.Header().Set(TraceIDHeader, traceID)
+			rw.Header().Set(SpanIDHeader, spanID)
 
 			// Replace request context with traced context
 			r = r.WithContext(ctx)
@@ -138,8 +143,7 @@ func Middleware(config *Config) func(http.Handler) http.Handler {
 			if statusCode >= 500 {
 				span.SetStatus(codes.Error, fmt.Sprintf("HTTP %d", statusCode))
 				span.SetAttributes(attribute.Bool("error", true))
-			} else if statusCode >= 400 {
-				span.SetAttributes(attribute.Bool("error", false))
+
 			}
 
 			// Log the completed request
@@ -158,7 +162,7 @@ func Middleware(config *Config) func(http.Handler) http.Handler {
 }
 
 // logRequest logs the incoming HTTP request
-func logRequest(config *Config, ctx any, r *http.Request, status int, duration time.Duration, requestID, traceID, spanID string) {
+func logRequest(config *Config, ctx context.Context, r *http.Request, status int, duration time.Duration, requestID, traceID, spanID string) {
 	if config.Logger == nil {
 		return
 	}

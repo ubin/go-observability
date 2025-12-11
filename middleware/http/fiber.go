@@ -55,21 +55,26 @@ func FiberMiddleware(config *Config) fiber.Handler {
 		}
 
 		// Extract trace context from incoming headers (for distributed tracing)
-		ctx := c.Context()
+		ctx := c.UserContext()
 		carrier := make(propagation.MapCarrier)
 		c.Request().Header.VisitAll(func(key, value []byte) {
 			carrier[string(key)] = string(value)
 		})
 		ctx = otel.GetTextMapPropagator().Extract(ctx, carrier)
 
+		// Get route path safely (c.Route() can be nil if route not matched)
+		routePath := c.Path()
+		if route := c.Route(); route != nil {
+			routePath = route.Path
+		}
 		// Create a span for this HTTP request
 		tracer := otel.Tracer(config.ServiceName)
-		ctx, span := tracer.Start(ctx, fmt.Sprintf("%s %s", c.Method(), c.Route().Path),
+		ctx, span := tracer.Start(ctx, fmt.Sprintf("%s %s", c.Method(), routePath),
 			trace.WithSpanKind(trace.SpanKindServer),
 			trace.WithAttributes(
 				attribute.String("http.method", c.Method()),
 				attribute.String("http.path", c.Path()),
-				attribute.String("http.route", c.Route().Path),
+				attribute.String("http.route", routePath),
 				attribute.String("http.scheme", c.Protocol()),
 				attribute.String("http.target", string(c.Request().RequestURI())),
 				attribute.String("http.host", c.Hostname()),
@@ -128,8 +133,7 @@ func FiberMiddleware(config *Config) fiber.Handler {
 			if err != nil {
 				span.RecordError(err)
 			}
-		} else if statusCode >= 400 {
-			span.SetAttributes(attribute.Bool("error", false))
+
 		}
 
 		// Log the completed request
