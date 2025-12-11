@@ -124,12 +124,11 @@ func Middleware(config *Config) func(http.Handler) http.Handler {
 							"path", r.URL.Path)
 					}
 
-
-				// Send 500 response if headers haven't been written yet
-				if !rw.wroteHeader {
-					rw.WriteHeader(http.StatusInternalServerError)
-					rw.Write([]byte("Internal Server Error"))
-				}
+					// Send 500 response if headers haven't been written yet
+					if !rw.wroteHeader {
+						rw.WriteHeader(http.StatusInternalServerError)
+						rw.Write([]byte("Internal Server Error"))
+					}
 					// Re-panic to let the server handle it
 					panic(err)
 				}
