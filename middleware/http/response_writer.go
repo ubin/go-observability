@@ -12,7 +12,6 @@ type responseWriter struct {
 	statusCode    int
 	bytesWritten  int
 	wroteHeader   bool
-	headerWritten bool
 }
 
 // newResponseWriter creates a new response writer wrapper
