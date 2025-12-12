@@ -1,8 +1,7 @@
 package http
 
 import (
-	"log/slog"
-
+	"github.com/ubin/go-observability/logger"
 	"go.opentelemetry.io/otel/sdk/trace"
 )
 
@@ -14,7 +13,7 @@ type Config struct {
 
 	// Logger is used for logging HTTP requests
 	// If nil, logging will be skipped
-	Logger *slog.Logger
+	Logger logger.ContextLogger
 
 	// ServiceName is the name of the service for tracing (defaults to "http-server")
 	ServiceName string

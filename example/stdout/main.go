@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/ubin/go-telemetry/telemetry"
-	"github.com/ubin/go-telemetry/telemetry/config"
+	"github.com/ubin/go-observability/telemetry"
+	"github.com/ubin/go-observability/telemetry/config"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/sdk/trace"
 )

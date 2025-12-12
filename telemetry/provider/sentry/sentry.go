@@ -3,7 +3,7 @@ package sentry
 import (
 	"github.com/getsentry/sentry-go"
 	sentryotel "github.com/getsentry/sentry-go/otel"
-	"github.com/ubin/go-telemetry/telemetry/config"
+	"github.com/ubin/go-observability/telemetry/config"
 	"go.opentelemetry.io/otel/sdk/trace"
 )
 

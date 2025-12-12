@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ubin/go-telemetry/telemetry/config"
-	"github.com/ubin/go-telemetry/telemetry/provider/sentry"
+	"github.com/ubin/go-observability/telemetry/config"
+	"github.com/ubin/go-observability/telemetry/provider/sentry"
 
 	"google.golang.org/grpc/credentials"
 

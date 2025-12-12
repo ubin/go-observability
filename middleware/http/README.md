@@ -96,7 +96,9 @@ type Config struct {
     TracerProvider *trace.TracerProvider
 
     // Logger for request logging (optional)
-    Logger *slog.Logger
+    // Accepts any logger that implements logger.ContextLogger interface
+    // (InfoContext and ErrorContext methods)
+    Logger logger.ContextLogger
 
     // ServiceName for tracing spans (default: "http-server")
     ServiceName string

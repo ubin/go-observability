@@ -43,7 +43,7 @@ func FiberMiddleware(config *Config) fiber.Handler {
 			// Still log the request if logger is configured
 			if config.Logger != nil && !config.SkipLogging {
 				defer func() {
-					config.Logger.Info("HTTP request completed",
+					config.Logger.InfoContext(c.UserContext(), "HTTP request completed",
 						"method", c.Method(),
 						"path", c.Path(),
 						"status", c.Response().StatusCode(),

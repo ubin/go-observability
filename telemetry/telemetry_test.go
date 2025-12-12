@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/ubin/go-telemetry/telemetry/config"
+	"github.com/ubin/go-observability/telemetry/config"
 )
 
 // MockConfig is a mock implementation of the Config interface for testing
