@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/getsentry/sentry-go"
-	"github.com/ubin/go-telemetry/telemetry"
-	"github.com/ubin/go-telemetry/telemetry/config"
+	"github.com/ubin/go-observability/telemetry"
+	"github.com/ubin/go-observability/telemetry/config"
 	"go.opentelemetry.io/otel"
 )
 

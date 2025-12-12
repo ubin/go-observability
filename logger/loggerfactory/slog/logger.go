@@ -114,7 +114,7 @@ func New(env config.LogEnv, cfg Config) (LoggerWrapper, error) {
 
 	var handler slog.Handler
 	switch strings.ToUpper(cfg.GetFormatter()) {
-	case JSON_FORMATTER:
+	case JSONFormatter:
 		// handler = slog.NewJSONHandler(w, options)
 		handler = otelslog.NewOtelHandler(slog.NewJSONHandler(w, options))
 	default:
