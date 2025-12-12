@@ -8,16 +8,14 @@ import (
 	"path/filepath"
 	"strings"
 
-	// "github.com/Garchen-Archive/garchen-archive/pkg/logger"
-
 	"github.com/ubin/go-observability/logger/loggerfactory/config"
 	otelslog "github.com/ubin/go-observability/telemetry/log/slog"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 const (
-	TEXT_FORMATTER = "TEXT"
-	JSON_FORMATTER = "JSON"
+	TextFormatter = "TEXT"
+	JSONFormatter = "JSON"
 )
 
 type Config interface {
