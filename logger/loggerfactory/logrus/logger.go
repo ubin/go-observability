@@ -28,6 +28,14 @@ func (l LoggerWrapper) UnderlyingLogger() interface{} {
 func toFields(keyvals ...interface{}) logrus.Fields {
 	fields := make(logrus.Fields, len(keyvals)/2)
 	for i := 0; i < len(keyvals); i += 2 {
+		// Handle odd-length keyvals slices
+		if i+1 >= len(keyvals) {
+			// If we have an odd number of elements, use the key with a nil value
+			if keyStr, ok := keyvals[i].(string); ok {
+				fields[keyStr] = nil
+			}
+			break
+		}
 		key, val := keyvals[i], keyvals[i+1]
 		if keyStr, ok := key.(string); ok {
 			fields[keyStr] = val

@@ -31,8 +31,8 @@ func getLogger(cfg logger.Config, env logconfig.LogEnv) (logger.Logger, error) {
 		logrusFactory := &LogrusFactory{}
 		return logrusFactory.CreateLogger(cfg, env)
 	case logconfig.SLOG:
-		logrusFactory := &SlogFactory{}
-		return logrusFactory.CreateLogger(cfg, env)
+		slogFactory := &SlogFactory{}
+		return slogFactory.CreateLogger(cfg, env)
 	default:
 		return nil, fmt.Errorf("unsupported log provider: %s", cfg.GetCode())
 	}
@@ -51,7 +51,7 @@ func (f *LogrusFactory) CreateLogger(cfg logger.Config, env logconfig.LogEnv) (l
 	return logrus.New(env, cfg)
 }
 
-// LogrusFactory is a factory for Logrus logger.
+// SlogFactory is a factory for Slog logger.
 type SlogFactory struct{}
 
 // CreateLogger creates a new slog logger.

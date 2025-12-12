@@ -2,7 +2,6 @@ package slog
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"log/slog"
 	"os"
@@ -37,7 +36,7 @@ type Config interface {
 // custom level for panic, as slog doesn't define panic level by default
 const LevelPanic = slog.Level(15)
 
-// LoggerWrapper is a logger that uses the logrus package
+// LoggerWrapper is a logger that uses the Go standard library's slog package
 type LoggerWrapper struct {
 	lgr *slog.Logger
 }

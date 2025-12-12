@@ -76,5 +76,5 @@ func (cfg Config) GetLocalTime() bool {
 
 func New(env config.LogEnv, cfg Config) (slog.LoggerWrapper, error) {
 	//TODO : customizations
-	return slog.New(config.LogEnvDev, cfg)
+	return slog.New(env, cfg)
 }
