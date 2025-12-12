@@ -109,8 +109,6 @@ func New(env config.LogEnv, cfg logger.Config) (logger.Logger, error) {
 	// logger := rus.WithField("logger", "app")
 	logger := LoggerWrapper{rus}
 	logger.Warn("Logrus initialized...")
-	logger.logger.Fatal()
-
 	log.SetOutput(logger.logger.Writer())
 
 	return logger, nil

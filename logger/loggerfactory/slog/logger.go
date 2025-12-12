@@ -82,8 +82,7 @@ func (l LoggerWrapper) ErrorContext(ctx context.Context, msg string, keyvals ...
 func (l LoggerWrapper) PanicContext(ctx context.Context, msg string, keyvals ...interface{}) {
 	otelslog.AddLogToSpan(ctx, LevelPanic, msg, keyvals...)
 	l.lgr.Log(ctx, LevelPanic, msg, keyvals...)
-	s := fmt.Sprintf(msg, keyvals...)
-	panic(s)
+	panic(msg)
 }
 
 func (l LoggerWrapper) UnderlyingLogger() interface{} {
