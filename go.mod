@@ -1,10 +1,13 @@
-module github.com/ubin/go-telemetry
+module github.com/ubin/go-observability
 
 go 1.22.1
 
 require (
 	github.com/getsentry/sentry-go v0.31.1
 	github.com/getsentry/sentry-go/otel v0.31.1
+	github.com/gofiber/fiber/v2 v2.52.10
+	github.com/google/uuid v1.6.0
+	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.10.0
 	go.opentelemetry.io/otel v1.34.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.34.0
@@ -13,6 +16,7 @@ require (
 	go.opentelemetry.io/otel/sdk v1.34.0
 	go.opentelemetry.io/otel/trace v1.34.0
 	google.golang.org/grpc v1.71.0
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
 require (
@@ -21,8 +25,6 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/gofiber/fiber/v2 v2.52.10 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.25.1 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
