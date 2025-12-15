@@ -11,18 +11,29 @@ type Sentry struct {
 	cfg config.Config
 }
 
-// InitSentry initializes Sentry for error monitoring
+// New initializes Sentry for error monitoring and distributed tracing
 func New(cfg config.Config) (*Sentry, error) {
 	s := Sentry{
 		cfg: cfg,
 	}
-	err := sentry.Init(sentry.ClientOptions{
+
+	clientOptions := sentry.ClientOptions{
 		Dsn:              cfg.GetCollectorEndpoint(),
-		EnableTracing:    cfg.IsInsecure(),
 		Environment:      cfg.GetEnvironment(),
-		TracesSampleRate: 1.0, // Adjust for performance (percentage of transactions to capture)
+		Release:          cfg.GetRelease(),
 		Debug:            cfg.IsDebugMode(),
-	})
+		AttachStacktrace: true,
+		EnableTracing:    true, // Always enable tracing when using Sentry exporter
+		TracesSampleRate: cfg.GetTracesSampleRate(),
+		EnableLogs:       cfg.IsLogsEnabled(), // Send logs to Sentry if enabled
+	}
+
+	// Only set ServerName if service name is provided
+	if cfg.GetServiceName() != "" {
+		clientOptions.ServerName = cfg.GetServiceName()
+	}
+
+	err := sentry.Init(clientOptions)
 	if err != nil {
 		return nil, err
 	}
