@@ -21,9 +21,8 @@ func main() {
 		Enabled:           true,
 		ExporterType:      config.ExporterTypeSentry,
 		CollectorEndpoint: "",
-		// CollectorEndpoint: "https://b64c5ffa046cfd0307594efe3ceccec6@o355784.ingest.us.sentry.io/4508456234254336",
-		Insecure:  true,
-		DebugMode: true,
+		Insecure:          true,
+		DebugMode:         true,
 	}
 	tp, err := telemetry.InitTracer(&cfg)
 	if err != nil {
