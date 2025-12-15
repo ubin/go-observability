@@ -19,7 +19,10 @@ type Config interface {
 	GetExporterType() ExporterType
 	GetCollectorEndpoint() string
 	IsInsecure() bool
-	IsDebugMode() bool // Add this method
+	IsDebugMode() bool
+	GetTracesSampleRate() float64
+	GetRelease() string
+	IsLogsEnabled() bool
 }
 
 // TracingConfig implements the Config interface
@@ -30,7 +33,10 @@ type TracingConfig struct {
 	ExporterType      ExporterType `koanf:"exporter_type"`
 	CollectorEndpoint string       `koanf:"collector_endpoint"`
 	Insecure          bool         `koanf:"insecure"`
-	DebugMode         bool         `koanf:"debug_mode"` // Add this field
+	DebugMode         bool         `koanf:"debug_mode"`
+	TracesSampleRate  float64      `koanf:"traces_sample_rate"` // 0.0 to 1.0 (0.1 = 10%, 1.0 = 100%)
+	Release           string       `koanf:"release"`            // Release version (e.g., "v1.0.0", git commit hash)
+	EnableLogs        bool         `koanf:"enable_logs"`        // Send logs to Sentry
 }
 
 // GetServiceName returns the service name
@@ -66,4 +72,22 @@ func (c *TracingConfig) IsInsecure() bool {
 // IsDebugMode returns if the debug mode is enabled
 func (c *TracingConfig) IsDebugMode() bool {
 	return c.DebugMode
+}
+
+// GetTracesSampleRate returns the traces sample rate (0.0 to 1.0)
+func (c *TracingConfig) GetTracesSampleRate() float64 {
+	if c.TracesSampleRate <= 0 {
+		return 1.0 // Default to 100% if not set
+	}
+	return c.TracesSampleRate
+}
+
+// GetRelease returns the release version
+func (c *TracingConfig) GetRelease() string {
+	return c.Release
+}
+
+// IsLogsEnabled returns if logs should be sent to Sentry
+func (c *TracingConfig) IsLogsEnabled() bool {
+	return c.EnableLogs
 }
