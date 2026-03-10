@@ -27,7 +27,7 @@ func NewOtelHandler(wrapped slog.Handler) *OtelHandler {
 func (h *OtelHandler) Handle(ctx context.Context, r slog.Record) error {
 	// Extract tracing information from context
 	span := trace.SpanFromContext(ctx)
-	if span != nil {
+	if span != nil && span.SpanContext().IsValid() {
 		traceID := span.SpanContext().TraceID().String()
 		spanID := span.SpanContext().SpanID().String()
 

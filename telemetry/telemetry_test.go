@@ -16,6 +16,9 @@ type MockConfig struct {
 	CollectorEndpoint string
 	Insecure          bool
 	DebugMode         bool
+	TracesSampleRate  float64
+	Release           string
+	LogsEnabled       bool
 }
 
 func (c *MockConfig) GetServiceName() string               { return c.ServiceName }
@@ -25,6 +28,9 @@ func (c *MockConfig) GetExporterType() config.ExporterType { return c.ExporterTy
 func (c *MockConfig) GetCollectorEndpoint() string         { return c.CollectorEndpoint }
 func (c *MockConfig) IsInsecure() bool                     { return c.Insecure }
 func (c *MockConfig) IsDebugMode() bool                    { return c.DebugMode }
+func (c *MockConfig) GetTracesSampleRate() float64         { return c.TracesSampleRate }
+func (c *MockConfig) GetRelease() string                   { return c.Release }
+func (c *MockConfig) IsLogsEnabled() bool                  { return c.LogsEnabled }
 
 func TestInitTracer_Sentry(t *testing.T) {
 	cfg := &MockConfig{
